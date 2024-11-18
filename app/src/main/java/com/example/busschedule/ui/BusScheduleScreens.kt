@@ -72,7 +72,7 @@ enum class BusScheduleScreens {
 
 @Composable
 fun BusScheduleApp(
-    viewModel: BusScheduleViewModel = viewModel(factory = BusScheduleViewModel.factory)
+    viewModel: BusScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val navController = rememberNavController()
     val fullScheduleTitle = stringResource(R.string.full_schedule)
@@ -145,7 +145,7 @@ fun FullScheduleScreen(
 @Composable
 fun RouteScheduleScreen(
     stopName: String,
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<BusSchedule?>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onBack: () -> Unit = {}
@@ -161,7 +161,7 @@ fun RouteScheduleScreen(
 
 @Composable
 fun BusScheduleScreen(
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<BusSchedule?>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     stopName: String? = null,
@@ -213,7 +213,7 @@ fun BusScheduleScreen(
  */
 @Composable
 fun BusScheduleDetails(
-    busSchedules: List<BusSchedule>,
+    busSchedules: List<BusSchedule?>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onScheduleClick: ((String) -> Unit)? = null
@@ -224,13 +224,13 @@ fun BusScheduleDetails(
     ) {
         items(
             items = busSchedules,
-            key = { busSchedule -> busSchedule.id }
+            key = { busSchedule -> busSchedule!!.id }
         ) { schedule ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(enabled = onScheduleClick != null) {
-                        onScheduleClick?.invoke(schedule.stopName)
+                        onScheduleClick?.invoke(schedule!!.stopName)
                     }
                     .padding(dimensionResource(R.dimen.padding_medium)),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -247,7 +247,7 @@ fun BusScheduleDetails(
                     )
                 } else {
                     Text(
-                        text = schedule.stopName,
+                        text = schedule!!.stopName,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontSize = dimensionResource(R.dimen.font_large).value.sp,
                             fontWeight = FontWeight(300)
@@ -256,7 +256,7 @@ fun BusScheduleDetails(
                 }
                 Text(
                     text = SimpleDateFormat("h:mm a", Locale.getDefault())
-                        .format(Date(schedule.arrivalTimeInMillis.toLong() * 1000)),
+                        .format(Date(schedule!!.arrivalTimeInMillis.toLong() * 1000)),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontSize = dimensionResource(R.dimen.font_large).value.sp,
                         fontWeight = FontWeight(600)
